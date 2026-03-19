@@ -19,8 +19,10 @@ class box_customwidget extends ModeleBoxes
     {
         global $langs;
         $this->db = $db;
-        $langs->loadLangs(array('customwidget@customwidget'));
         parent::__construct($db, $param);
+        if (is_object($langs)) {
+            $langs->loadLangs(array('customwidget@customwidget'));
+        }
     }
 
     public function loadBox($max = 5, $cachedelay = 0)
