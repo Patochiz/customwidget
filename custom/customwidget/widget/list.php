@@ -54,7 +54,7 @@ $w_obj = new CustomWidget($db);
 $widgets = $w_obj->fetchAll($filter_type, $filter_zone, false);
 
 // Affichage
-llxHeader('', $langs->trans('CustomWidgetList'), '', '', 0, 0, array(dol_buildpath('/customwidget/js/customwidget.js', 1)), array(dol_buildpath('/customwidget/css/customwidget.css', 1)));
+llxHeader('', $langs->trans('CustomWidgetList'), '', '', 0, 0, array(), array(dol_buildpath('/customwidget/css/customwidget.css', 1)));
 
 $head = customwidget_admin_prepare_head();
 print dol_get_fiche_head($head, 'list', $langs->trans('Module500200Name'), -1, 'customwidget@customwidget');
@@ -158,6 +158,7 @@ print '<script>';
 print 'var cw_ajax_reorder_url = "'.dol_buildpath('/customwidget/ajax/reorder.php', 1).'";';
 print 'var cw_token = "'.newToken().'";';
 print '</script>';
+print '<script src="'.dol_buildpath('/customwidget/js/customwidget.js', 1).'?v='.urlencode(DOL_VERSION).'"></script>';
 
 llxFooter();
 $db->close();

@@ -172,10 +172,7 @@ if ($action === 'update' && $user->hasRight('customwidget', 'write') && $id > 0)
 
 // --- Affichage ---
 $title = ($action === 'create') ? $langs->trans('CustomWidgetNew') : $langs->trans('CustomWidgetCard');
-llxHeader('', $title, '', '', 0, 0,
-    array(dol_buildpath('/customwidget/js/customwidget.js', 1)),
-    array(dol_buildpath('/customwidget/css/customwidget.css', 1))
-);
+llxHeader('', $title, '', '', 0, 0, array(), array(dol_buildpath('/customwidget/css/customwidget.css', 1)));
 
 $current_groups = ($id > 0) ? $object->getGroups() : array();
 $col_config = array();
@@ -445,13 +442,14 @@ if ($id > 0) {
     print dol_get_fiche_end();
 }
 
-// Variables JS pour AJAX
+// Variables JS pour AJAX + inclusion du script module
 print '<script>';
 print 'var cw_ajax_testquery_url = "'.dol_buildpath('/customwidget/ajax/testquery.php', 1).'";';
 print 'var cw_ajax_preview_url = "'.dol_buildpath('/customwidget/ajax/preview.php', 1).'";';
 print 'var cw_token = "'.newToken().'";';
 print 'var cw_col_types = '.json_encode($col_types_list).';';
 print '</script>';
+print '<script src="'.dol_buildpath('/customwidget/js/customwidget.js', 1).'?v='.urlencode(DOL_VERSION).'"></script>';
 
 llxFooter();
 $db->close();
