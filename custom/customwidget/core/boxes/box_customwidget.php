@@ -1,26 +1,23 @@
 <?php
 /**
- * Classe box générique pour les widgets SQL dashboard
+ * Box générique : affiche tous les widgets SQL actifs visibles par l'utilisateur
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 class box_customwidget extends ModeleBoxes
 {
-    public $boxcode = "customwidget";
-    public $boximg = "customwidget@customwidget";
-    public $boxlabel = "SQL Widget";
-    public $depends = array('customwidget');
+    public $boxcode  = 'customwidget';
+    public $boximg   = 'customwidget@customwidget';
+    public $boxlabel = 'SQL Widgets';
+    public $depends  = array('customwidget');
 
-    public $info_box_head = array();
+    public $info_box_head     = array();
     public $info_box_contents = array();
-
-    private $html_content = '';
-    private $widget_label = '';
 
     public function __construct($db, $param = '')
     {
-        global $conf, $user, $langs;
+        global $langs;
         $this->db = $db;
         $langs->loadLangs(array('customwidget@customwidget'));
         parent::__construct($db, $param);
@@ -28,9 +25,12 @@ class box_customwidget extends ModeleBoxes
 
     public function loadBox($max = 5, $cachedelay = 0)
     {
-        global $conf, $user, $langs;
+        global $user, $langs;
 
         if (!isModEnabled('customwidget')) {
+            return;
+        }
+        if (!$user->hasRight('customwidget', 'read')) {
             return;
         }
 
@@ -39,47 +39,63 @@ class box_customwidget extends ModeleBoxes
 
         $langs->loadLangs(array('customwidget@customwidget'));
 
-        // Déterminer le slot de cette instance
-        $slot_index = 0;
-        if (isset($this->box_order) && is_numeric($this->box_order)) {
-            $slot_index = (int) $this->box_order;
-        } elseif (isset($this->box_id)) {
-            // Extraire l'index depuis box_id si possible
-            $slot_index = max(0, (int) $this->box_id - 1);
-        }
+        $this->info_box_head = array(
+            'text'  => $langs->trans('CustomWidgets'),
+            'limit' => 0,
+        );
 
-        // Charger tous les widgets actifs de type 'box' visibles par l'utilisateur
-        $w_obj = new CustomWidget($this->db);
+        // Charger tous les widgets actifs zone='box' visibles par l'utilisateur
+        $w_obj   = new CustomWidget($this->db);
         $widgets = $w_obj->fetchAllForUser($user, '', 'box');
 
-        if (isset($widgets[$slot_index])) {
-            $widget = $widgets[$slot_index];
-            $this->widget_label = $widget->label;
-            $this->boxlabel = $widget->label;
-
-            try {
-                $this->html_content = CustomWidgetHelper::render($widget, $this->db, $langs);
-            } catch (Exception $e) {
-                $this->html_content = '<div class="error">'.htmlspecialchars($e->getMessage()).'</div>';
-            }
-
-            $this->info_box_head = array(
-                'text' => $langs->trans('SQLWidget').': '.htmlspecialchars($widget->label),
-                'limit' => 0,
-            );
+        if (empty($widgets)) {
             $this->info_box_contents = array(
-                array(array('td' => 'class="nohover"', 'text' => $this->html_content)),
+                array(
+                    array(
+                        'td'   => 'class="nohover opacitymedium center"',
+                        'text' => $langs->trans('NoWidgetForThisSlot'),
+                    ),
+                ),
             );
-        } else {
-            // Pas de widget pour ce slot
-            $this->info_box_head = array(
-                'text' => $langs->trans('SQLWidget'),
-                'limit' => 0,
-            );
-            $this->info_box_contents = array(
-                array(array('td' => 'class="nohover opacitymedium center"', 'text' => $langs->trans('NoWidgetForThisSlot'))),
-            );
+            return;
         }
+
+        // Inclure Chart.js une seule fois si besoin
+        $need_chartjs = false;
+        foreach ($widgets as $w) {
+            if ($w->widget_type === 'chart') {
+                $need_chartjs = true;
+                break;
+            }
+        }
+
+        $html = '';
+        if ($need_chartjs) {
+            global $conf;
+            $chartjs_url = !empty($conf->global->CUSTOMWIDGET_CHARTJS_CDN)
+                ? $conf->global->CUSTOMWIDGET_CHARTJS_CDN
+                : dol_buildpath('/customwidget/js/chart.min.js', 1);
+            $html .= '<script src="'.htmlspecialchars($chartjs_url).'"></script>';
+        }
+
+        foreach ($widgets as $widget) {
+            $html .= '<div class="customwidget-box-item" style="margin-bottom:15px;">';
+            try {
+                $html .= CustomWidgetHelper::render($widget, $this->db, $langs);
+            } catch (Exception $e) {
+                $html .= '<div class="error">'.htmlspecialchars($e->getMessage()).'</div>';
+            }
+            $html .= '</div>';
+        }
+
+        $this->info_box_contents = array(
+            array(
+                array(
+                    'td'   => 'class="nohover"',
+                    'text' => $html,
+                ),
+            ),
+        );
     }
 
     public function showBox($head = null, $contents = null, $nooutput = 0)

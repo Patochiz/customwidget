@@ -83,16 +83,14 @@ class modCustomWidget extends DolibarrModules
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'delete';
 
-        // Boxes
-        $this->boxes = array();
-        $maxslots = (!empty($conf->global->CUSTOMWIDGET_MAX_SLOTS) ? (int) $conf->global->CUSTOMWIDGET_MAX_SLOTS : 10);
-        for ($i = 0; $i < $maxslots; $i++) {
-            $this->boxes[$i] = array(
+        // Boxes - une seule box qui affiche tous les widgets actifs
+        $this->boxes = array(
+            0 => array(
                 'file'              => 'box_customwidget.php@customwidget',
-                'note'              => 'Widget SQL personnalisé - Slot '.($i + 1),
+                'note'              => 'Widgets SQL personnalisés (tous les widgets actifs)',
                 'enabledbydefaulton' => 'Home',
-            );
-        }
+            ),
+        );
 
         // Menus
         $this->menu = array();
