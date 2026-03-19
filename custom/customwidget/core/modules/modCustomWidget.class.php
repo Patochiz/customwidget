@@ -136,6 +136,10 @@ class modCustomWidget extends DolibarrModules
      */
     public function init($options = '')
     {
+        $result = $this->_load_tables('/customwidget/sql/');
+        if ($result < 0) {
+            return -1;
+        }
         $sql = array();
         return $this->_init($sql, $options);
     }
