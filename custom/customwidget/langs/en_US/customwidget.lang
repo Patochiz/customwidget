@@ -1,0 +1,89 @@
+Module500200Name = SQL Widgets
+Module500200Desc = Custom widgets powered by SQL queries on the dashboard
+
+CustomWidgetSetup = SQL Widgets Configuration
+CustomWidgetAbout = About
+CustomWidgetList = Widget list
+CustomWidgetNew = New widget
+CustomWidgetCard = Widget card
+CustomWidgets = SQL Widgets
+
+WidgetType = Widget type
+WidgetTypeNumber = Number (KPI)
+WidgetTypeTable = Table
+WidgetTypeChart = Chart
+WidgetLabel = Label
+WidgetRef = Reference
+WidgetSqlQuery = SQL Query
+WidgetDisplayZone = Display zone
+WidgetZoneBox = Dashboard box
+WidgetZoneStats = Statistics zone
+WidgetActive = Active
+WidgetPosition = Order
+WidgetCacheDuration = Cache duration (seconds)
+WidgetGroups = Allowed groups
+WidgetGroupsHelp = Leave empty to make visible to all users
+WidgetDescription = Description
+
+WidgetTestQuery = Test query
+WidgetPreview = Preview
+WidgetQueryResult = Query result
+WidgetQueryError = Query error
+WidgetQueryTime = Execution time
+WidgetQueryRows = rows returned
+WidgetQueryForbidden = Forbidden query: only SELECT queries are allowed
+WidgetQueryPrefixHelp = Use __PREFIX__ for the table prefix (e.g. __PREFIX__societe)
+
+WidgetNumberIcon = Icon
+WidgetNumberColor = Color
+WidgetNumberSuffix = Suffix
+WidgetNumberUrl = Click URL
+WidgetNumberSub1 = Sub-indicator 1
+WidgetNumberSub2 = Sub-indicator 2
+WidgetNumberIconHelp = fa-xxx for FontAwesome, emoji, or leave empty
+
+WidgetTableColumns = Column configuration
+WidgetTableMaxRows = Max rows
+WidgetTableColName = SQL column name
+WidgetTableColLabel = Display label
+WidgetTableColType = Type
+WidgetTableColLink = Link (optional)
+WidgetTableAddColumn = Add column
+WidgetTableLinkHelp = URL with {value} and {rowid} as placeholders
+
+WidgetChartType = Chart type
+WidgetChartBar = Bar
+WidgetChartLine = Line
+WidgetChartDoughnut = Doughnut
+WidgetChartPie = Pie
+WidgetChartHeight = Height (px)
+WidgetChartColors = Color palette
+WidgetChartLabelCol = Label column (index)
+WidgetChartDataCol = Data column (index)
+WidgetChartAddColor = Add color
+
+ConfirmDeleteWidget = Are you sure you want to delete this widget?
+WidgetCreated = Widget created successfully
+WidgetUpdated = Widget updated successfully
+WidgetDeleted = Widget deleted
+WidgetCloned = Widget duplicated successfully
+
+CUSTOMWIDGET_MAX_ROWS = Default max rows
+CUSTOMWIDGET_CACHE_DEFAULT = Default cache duration (sec.)
+CUSTOMWIDGET_ALLOW_JOIN = Allow JOIN in queries
+CUSTOMWIDGET_MAX_SLOTS = Active box slots (max 20)
+CUSTOMWIDGET_CHARTJS_CDN = Chart.js CDN URL (empty = local copy)
+
+SQLWidget = SQL Widget
+SQLWidgetSlot = SQL widget slot
+NoWidgetForThisSlot = No widget configured for this slot
+WidgetSQLExamples = Query examples
+
+Back = Back
+Save = Save
+Cancel = Cancel
+Edit = Edit
+Delete = Delete
+Clone = Clone
+Activate = Activate
+Deactivate = Deactivate
