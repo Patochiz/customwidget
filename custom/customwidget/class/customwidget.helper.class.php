@@ -80,12 +80,13 @@ class CustomWidgetHelper
         $rows = array();
 
         if ($num > 0) {
-            $first = $db->fetch_array($resql);
+            // fetch_object() pour éviter le doublon numérique/string de fetch_array() (MYSQLI_BOTH)
+            $first = $db->fetch_object($resql);
             if ($first) {
-                $columns = array_keys($first);
-                $rows[] = array_values($first);
-                while ($row = $db->fetch_array($resql)) {
-                    $rows[] = array_values($row);
+                $columns = array_keys((array) $first);
+                $rows[] = array_values((array) $first);
+                while ($obj = $db->fetch_object($resql)) {
+                    $rows[] = array_values((array) $obj);
                 }
             }
         }
