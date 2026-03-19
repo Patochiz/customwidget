@@ -173,8 +173,8 @@ if ($action === 'update' && $user->hasRight('customwidget', 'write') && $id > 0)
 // --- Affichage ---
 $title = ($action === 'create') ? $langs->trans('CustomWidgetNew') : $langs->trans('CustomWidgetCard');
 llxHeader('', $title, '', '', 0, 0,
-    array(dol_buildpath('/customwidget/css/customwidget.css', 1)),
-    array(dol_buildpath('/customwidget/js/customwidget.js', 1))
+    array(dol_buildpath('/customwidget/js/customwidget.js', 1)),
+    array(dol_buildpath('/customwidget/css/customwidget.css', 1))
 );
 
 $current_groups = ($id > 0) ? $object->getGroups() : array();
@@ -317,8 +317,8 @@ print '<td><input type="text" name="number_icon" class="flat" value="'.htmlspeci
 print '<small>'.$langs->trans('WidgetNumberIconHelp').'</small></td></tr>';
 
 print '<tr><td>'.$langs->trans('WidgetNumberColor').'</td>';
-print '<td><input type="color" name="number_color" value="'.htmlspecialchars($object->number_color ?: '#0077b6').'"> ';
-print '<input type="text" name="number_color" class="flat width100" value="'.htmlspecialchars($object->number_color ?: '#0077b6').'" oninput="this.previousElementSibling.value=this.value" style="display:inline-block;margin-left:5px;"></td></tr>';
+print '<td><input type="color" id="cw_number_color_picker" value="'.htmlspecialchars($object->number_color ?: '#0077b6').'" oninput="document.getElementById(\'cw_number_color_text\').value=this.value"> ';
+print '<input type="text" id="cw_number_color_text" name="number_color" class="flat width100" value="'.htmlspecialchars($object->number_color ?: '#0077b6').'" oninput="document.getElementById(\'cw_number_color_picker\').value=this.value" style="display:inline-block;margin-left:5px;"></td></tr>';
 
 print '<tr><td>'.$langs->trans('WidgetNumberSuffix').'</td>';
 print '<td><input type="text" name="number_suffix" class="flat width100" value="'.htmlspecialchars($object->number_suffix).'" placeholder="€"></td></tr>';
