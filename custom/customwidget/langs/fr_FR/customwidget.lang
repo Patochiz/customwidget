@@ -1,5 +1,5 @@
-Module500200Name = Widgets SQL
-Module500200Desc = Widgets personnalisés alimentés par des requêtes SQL sur le tableau de bord
+Module680200Name = Widgets SQL
+Module680200Desc = Widgets personnalisés alimentés par des requêtes SQL sur le tableau de bord
 
 CustomWidgetSetup = Configuration des widgets SQL
 CustomWidgetAbout = À propos

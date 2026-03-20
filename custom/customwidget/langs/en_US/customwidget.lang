@@ -1,5 +1,5 @@
-Module500200Name = SQL Widgets
-Module500200Desc = Custom widgets powered by SQL queries on the dashboard
+Module680200Name = SQL Widgets
+Module680200Desc = Custom widgets powered by SQL queries on the dashboard
 
 CustomWidgetSetup = SQL Widgets Configuration
 CustomWidgetAbout = About

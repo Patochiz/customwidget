@@ -46,7 +46,7 @@ if ($action === 'update') {
 llxHeader('', $langs->trans('CustomWidgetSetup'));
 
 $head = customwidget_admin_prepare_head();
-print dol_get_fiche_head($head, 'setup', $langs->trans('Module500200Name'), -1, 'customwidget@customwidget');
+print dol_get_fiche_head($head, 'setup', $langs->trans('Module680200Name'), -1, 'customwidget@customwidget');
 
 print '<form method="POST" action="setup.php">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

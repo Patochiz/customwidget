@@ -20,11 +20,11 @@ if (!$user->admin) {
 llxHeader('', $langs->trans('CustomWidgetAbout'));
 
 $head = customwidget_admin_prepare_head();
-print dol_get_fiche_head($head, 'about', $langs->trans('Module500200Name'), -1, 'customwidget@customwidget');
+print dol_get_fiche_head($head, 'about', $langs->trans('Module680200Name'), -1, 'customwidget@customwidget');
 
 print '<div class="center">';
 print '<br>';
-print '<h2>'.$langs->trans('Module500200Name').' v1.0.0</h2>';
+print '<h2>'.$langs->trans('Module680200Name').' v1.0.0</h2>';
 print '<p>'.$langs->trans('Module500200Desc').'</p>';
 print '<br>';
 print '<p><strong>Auteur</strong> : Module CustomWidget</p>';

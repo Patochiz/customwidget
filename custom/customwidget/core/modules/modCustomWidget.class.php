@@ -15,7 +15,7 @@ class modCustomWidget extends DolibarrModules
         $this->db = $db;
 
         // Module identifier
-        $this->numero = 500200;
+        $this->numero = 680200;
         $this->rights_class = 'customwidget';
         $this->family = 'other';
         $this->module_position = 90;
@@ -66,19 +66,19 @@ class modCustomWidget extends DolibarrModules
         $this->rights = array();
         $r = 0;
 
-        $this->rights[$r][0] = $this->numero + $r + 1; // 500201
+        $this->rights[$r][0] = $this->numero + $r + 1; // 680201
         $this->rights[$r][1] = 'Voir les widgets SQL';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'read';
         $r++;
 
-        $this->rights[$r][0] = $this->numero + $r + 1; // 500202
+        $this->rights[$r][0] = $this->numero + $r + 1; // 680202
         $this->rights[$r][1] = 'Créer/modifier les widgets SQL';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'write';
         $r++;
 
-        $this->rights[$r][0] = $this->numero + $r + 1; // 500203
+        $this->rights[$r][0] = $this->numero + $r + 1; // 680203
         $this->rights[$r][1] = 'Supprimer les widgets SQL';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'delete';
