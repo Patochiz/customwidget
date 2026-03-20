@@ -217,20 +217,25 @@ class CustomWidgetHelper
             return '<div class="error">'.htmlspecialchars($result['error']).'</div>';
         }
 
-        // Configuration colonnes
-        $col_config = array();
+        // Configuration colonnes : indexée par nom SQL pour éviter les décalages
+        $col_config_by_name = array();
         if ($widget->table_columns) {
             $decoded = json_decode($widget->table_columns, true);
             if (is_array($decoded)) {
-                $col_config = $decoded;
+                foreach ($decoded as $cfg) {
+                    if (!empty($cfg['name'])) {
+                        $col_config_by_name[$cfg['name']] = $cfg;
+                    }
+                }
             }
         }
 
         $html = '<div class="div-table-responsive">';
         $html .= '<table class="tagtable liste">';
         $html .= '<thead><tr class="liste_titre">';
-        foreach ($result['columns'] as $i => $col) {
-            $label = isset($col_config[$i]['label']) ? $col_config[$i]['label'] : $col;
+        foreach ($result['columns'] as $col) {
+            $cfg = isset($col_config_by_name[$col]) ? $col_config_by_name[$col] : array();
+            $label = isset($cfg['label']) ? $cfg['label'] : $col;
             $html .= '<th>'.htmlspecialchars($label).'</th>';
         }
         $html .= '</tr></thead>';
@@ -240,8 +245,10 @@ class CustomWidgetHelper
         foreach ($result['rows'] as $row) {
             $html .= '<tr class="'.($tr % 2 == 0 ? 'oddeven' : 'oddeven').'">';
             foreach ($row as $i => $val) {
-                $type = isset($col_config[$i]['type']) ? $col_config[$i]['type'] : 'text';
-                $link = isset($col_config[$i]['link']) ? $col_config[$i]['link'] : '';
+                $colname = isset($result['columns'][$i]) ? $result['columns'][$i] : '';
+                $cfg = isset($col_config_by_name[$colname]) ? $col_config_by_name[$colname] : array();
+                $type = isset($cfg['type']) ? $cfg['type'] : 'text';
+                $link = isset($cfg['link']) ? $cfg['link'] : '';
                 $formatted = self::formatValue($val, $type, $langs);
                 if ($link) {
                     $href = str_replace(array('{value}', '{rowid}'), array(urlencode($val), isset($row[0]) ? urlencode($row[0]) : ''), $link);
