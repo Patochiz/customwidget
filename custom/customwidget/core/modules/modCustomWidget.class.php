@@ -138,7 +138,15 @@ class modCustomWidget extends DolibarrModules
         // On l'appelle sans bloquer pour ne pas empêcher l'enregistrement des boxes
         $this->_load_tables('/customwidget/sql/');
         $sql = array();
-        return $this->_init($sql, $options);
+        $result = $this->_init($sql, $options);
+
+        // Forcer la box en position 0 (pleine largeur) sur le dashboard
+        $this->db->query(
+            "UPDATE ".MAIN_DB_PREFIX."boxes SET position = 0, fk_position = 0"
+            ." WHERE box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = 'box_customwidget.php@customwidget')"
+        );
+
+        return $result;
     }
 
     /**
