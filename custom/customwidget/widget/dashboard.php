@@ -55,6 +55,7 @@ if (empty($widgets)) {
     print '<div class="customwidget-dashboard">';
     foreach ($widgets as $widget) {
         print '<div class="customwidget-box-item" data-widget-id="'.(int) $widget->id.'" data-refresh-url="'.htmlspecialchars($refresh_url).'" style="position:relative;margin-bottom:15px;">';
+        print '<h2 class="customwidget-title">'.htmlspecialchars($widget->label).'</h2>';
         print '<button type="button" class="cw-refresh-btn" onclick="cwRefreshWidget('.(int) $widget->id.')" title="'.$langs->trans('Refresh').'"><i class="fas fa-sync-alt"></i></button>';
         try {
             print CustomWidgetHelper::render($widget, $db, $langs, false);
