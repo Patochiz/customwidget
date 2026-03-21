@@ -83,7 +83,7 @@ class box_customwidget extends ModeleBoxes
         foreach ($widgets as $widget) {
             $html .= '<div class="customwidget-box-item" style="margin-bottom:15px;">';
             try {
-                $html .= CustomWidgetHelper::render($widget, $this->db, $langs);
+                $html .= CustomWidgetHelper::render($widget, $this->db, $langs, ($cachedelay > 0));
             } catch (Exception $e) {
                 $html .= '<div class="error">'.htmlspecialchars($e->getMessage()).'</div>';
             }

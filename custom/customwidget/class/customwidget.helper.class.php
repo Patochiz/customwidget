@@ -405,10 +405,10 @@ class CustomWidgetHelper
     /**
      * Rendu d'un widget avec gestion cache
      */
-    public static function render($widget, $db, $langs)
+    public static function render($widget, $db, $langs, $use_cache = true)
     {
         $wid = $widget;
-        $duration = (int) $widget->cache_duration;
+        $duration = $use_cache ? (int) $widget->cache_duration : 0;
         $key = 'widget_'.(int) $widget->id;
 
         return self::cached($key, $duration, function () use ($wid, $db, $langs) {
