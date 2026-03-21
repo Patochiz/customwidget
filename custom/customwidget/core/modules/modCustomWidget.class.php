@@ -127,6 +127,23 @@ class modCustomWidget extends DolibarrModules
             'target'   => '',
             'user'     => 0,
         );
+        $r++;
+
+        $this->menu[$r] = array(
+            'fk_menu'  => 'fk_mainmenu=home',
+            'type'     => 'left',
+            'titre'    => 'CustomWidgetDashboard',
+            'prefix'   => img_picto('', 'customwidget@customwidget', 'class="paddingright pictofixedwidth"'),
+            'mainmenu' => 'home',
+            'leftmenu' => 'customwidget_dashboard',
+            'url'      => '/customwidget/widget/dashboard.php',
+            'langs'    => 'customwidget@customwidget',
+            'position' => 1,
+            'enabled'  => 'isModEnabled("customwidget")',
+            'perms'    => '$user->hasRight("customwidget", "read")',
+            'target'   => '',
+            'user'     => 0,
+        );
     }
 
     /**

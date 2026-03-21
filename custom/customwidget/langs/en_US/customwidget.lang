@@ -7,6 +7,7 @@ CustomWidgetList = Widget list
 CustomWidgetNew = New widget
 CustomWidgetCard = Widget card
 CustomWidgets = SQL Widgets
+CustomWidgetDashboard = SQL Widgets
 
 WidgetType = Widget type
 WidgetTypeNumber = Number (KPI)
