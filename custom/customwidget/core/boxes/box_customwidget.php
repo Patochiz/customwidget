@@ -82,8 +82,9 @@ class box_customwidget extends ModeleBoxes
             $html .= '<script src="'.htmlspecialchars($chartjs_url).'"></script>';
         }
 
+        $html .= '<div class="customwidget-box-wrapper">';
         foreach ($widgets as $widget) {
-            $html .= '<div class="customwidget-box-item" data-widget-id="'.(int) $widget->id.'" data-refresh-url="'.htmlspecialchars($refresh_url).'" style="margin-bottom:15px;position:relative;">';
+            $html .= '<div class="customwidget-box-item" data-widget-id="'.(int) $widget->id.'" data-refresh-url="'.htmlspecialchars($refresh_url).'" style="position:relative;">';
             $html .= '<button type="button" class="cw-refresh-btn" onclick="cwRefreshWidget('.(int) $widget->id.')" title="'.$langs->trans('Refresh').'"><i class="fas fa-sync-alt"></i></button>';
             try {
                 $html .= CustomWidgetHelper::render($widget, $this->db, $langs, ($cachedelay > 0));
@@ -92,6 +93,7 @@ class box_customwidget extends ModeleBoxes
             }
             $html .= '</div>';
         }
+        $html .= '</div>';
 
         $this->info_box_contents = array(
             array(
