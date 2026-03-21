@@ -120,6 +120,39 @@
 }
 
 /* ========================
+   Bouton refresh widget
+   ======================== */
+.cw-refresh-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 0.85em;
+    padding: 2px 5px;
+    border-radius: 3px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.cw-refresh-btn:hover {
+    opacity: 1;
+    color: #0077b6;
+}
+
+.cw-spinning {
+    animation: cw-spin 1s linear infinite;
+}
+
+@keyframes cw-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ========================
    Colonnes dynamiques (card)
    ======================== */
 .cw-color-row {

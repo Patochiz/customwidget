@@ -253,6 +253,53 @@ function cwRemoveRow(btn) {
 })();
 
 /* ========================
+   Rafraîchir un widget (dashboard)
+   ======================== */
+function cwRefreshWidget(widgetId) {
+    var container = document.querySelector('.customwidget-box-item[data-widget-id="' + widgetId + '"]');
+    if (!container) return;
+    var btn = container.querySelector('.cw-refresh-btn');
+    if (btn) btn.classList.add('cw-spinning');
+
+    var fd = new FormData();
+    fd.append('widget_id', widgetId);
+    fd.append('token', typeof cw_token !== 'undefined' ? cw_token : '');
+
+    fetch(typeof cw_ajax_refresh_url !== 'undefined' ? cw_ajax_refresh_url : '', {
+        method: 'POST',
+        body: fd
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (btn) btn.classList.remove('cw-spinning');
+        if (!data.success) return;
+        // Supprimer l'ancien contenu (sauf le bouton refresh)
+        var children = Array.prototype.slice.call(container.childNodes);
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] !== btn) {
+                container.removeChild(children[i]);
+            }
+        }
+        // Insérer le nouveau contenu
+        var temp = document.createElement('div');
+        temp.innerHTML = data.html;
+        while (temp.firstChild) {
+            container.appendChild(temp.firstChild);
+        }
+        // Ré-exécuter les scripts injectés (Chart.js)
+        var scripts = container.querySelectorAll('script');
+        for (var s = 0; s < scripts.length; s++) {
+            var sc = document.createElement('script');
+            sc.textContent = scripts[s].textContent;
+            document.head.appendChild(sc);
+        }
+    })
+    .catch(function() {
+        if (btn) btn.classList.remove('cw-spinning');
+    });
+}
+
+/* ========================
    Utilitaires
    ======================== */
 function cwEscape(str) {
