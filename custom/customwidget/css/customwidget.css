@@ -1,0 +1,129 @@
+/* CustomWidget - Styles spécifiques */
+
+/* ========================
+   KPI / Number
+   ======================== */
+.customwidget-kpi {
+    display: inline-block;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    min-width: 150px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    vertical-align: top;
+}
+
+.customwidget-kpi:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.customwidget-kpi .cw-icon {
+    margin-bottom: 5px;
+}
+
+.customwidget-kpi .cw-value {
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.customwidget-kpi .cw-label {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 4px;
+}
+
+.customwidget-kpi .cw-sub {
+    font-size: 0.75em;
+    color: #999;
+    margin-top: 4px;
+    border-top: 1px solid #eee;
+    padding-top: 4px;
+}
+
+/* ========================
+   Zone stats page d'accueil
+   ======================== */
+.customwidget-stats-zone {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+}
+
+/* ========================
+   Chart
+   ======================== */
+.customwidget-chart {
+    position: relative;
+    width: 100%;
+}
+
+/* ========================
+   Résultat de requête (test)
+   ======================== */
+.customwidget-query-result {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background: #f9f9f9;
+    overflow-x: auto;
+}
+
+.customwidget-query-result table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.customwidget-query-result th {
+    background: #eee;
+    padding: 5px 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.customwidget-query-result td {
+    padding: 4px 8px;
+    border: 1px solid #eee;
+}
+
+.customwidget-query-result tr:nth-child(even) td {
+    background: #f5f5f5;
+}
+
+.customwidget-query-result .cw-query-meta {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.customwidget-query-result .cw-query-error {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+/* ========================
+   Drag & drop (liste)
+   ======================== */
+.drag-row {
+    cursor: grab;
+}
+
+.drag-row.dragging {
+    opacity: 0.4;
+}
+
+/* ========================
+   Colonnes dynamiques (card)
+   ======================== */
+.cw-color-row {
+    display: inline-block;
+    margin: 3px;
+    vertical-align: middle;
+}

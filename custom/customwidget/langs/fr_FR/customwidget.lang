@@ -1,0 +1,89 @@
+Module680200Name = Widgets SQL
+Module680200Desc = Widgets personnalisés alimentés par des requêtes SQL sur le tableau de bord
+
+CustomWidgetSetup = Configuration des widgets SQL
+CustomWidgetAbout = À propos
+CustomWidgetList = Liste des widgets
+CustomWidgetNew = Nouveau widget
+CustomWidgetCard = Fiche widget
+CustomWidgets = Widgets SQL
+
+WidgetType = Type de widget
+WidgetTypeNumber = Nombre (KPI)
+WidgetTypeTable = Tableau
+WidgetTypeChart = Graphique
+WidgetLabel = Libellé
+WidgetRef = Référence
+WidgetSqlQuery = Requête SQL
+WidgetDisplayZone = Zone d'affichage
+WidgetZoneBox = Boîte dashboard
+WidgetZoneStats = Zone statistiques
+WidgetActive = Actif
+WidgetPosition = Ordre
+WidgetCacheDuration = Durée cache (secondes)
+WidgetGroups = Groupes autorisés
+WidgetGroupsHelp = Laisser vide pour rendre visible à tous les utilisateurs
+WidgetDescription = Description
+
+WidgetTestQuery = Tester la requête
+WidgetPreview = Prévisualiser
+WidgetQueryResult = Résultat de la requête
+WidgetQueryError = Erreur dans la requête
+WidgetQueryTime = Temps d'exécution
+WidgetQueryRows = lignes retournées
+WidgetQueryForbidden = Requête interdite : seules les requêtes SELECT sont autorisées
+WidgetQueryPrefixHelp = Utilisez __PREFIX__ pour le préfixe des tables (ex: __PREFIX__societe)
+
+WidgetNumberIcon = Icône
+WidgetNumberColor = Couleur
+WidgetNumberSuffix = Suffixe
+WidgetNumberUrl = URL au clic
+WidgetNumberSub1 = Sous-indicateur 1
+WidgetNumberSub2 = Sous-indicateur 2
+WidgetNumberIconHelp = fa-xxx pour FontAwesome, emoji, ou laisser vide
+
+WidgetTableColumns = Configuration des colonnes
+WidgetTableMaxRows = Nombre max de lignes
+WidgetTableColName = Nom colonne SQL
+WidgetTableColLabel = Libellé affiché
+WidgetTableColType = Type
+WidgetTableColLink = Lien (optionnel)
+WidgetTableAddColumn = Ajouter une colonne
+WidgetTableLinkHelp = URL avec {value} et {rowid} comme placeholders
+
+WidgetChartType = Type de graphique
+WidgetChartBar = Barres
+WidgetChartLine = Lignes
+WidgetChartDoughnut = Anneau
+WidgetChartPie = Camembert
+WidgetChartHeight = Hauteur (px)
+WidgetChartColors = Palette de couleurs
+WidgetChartLabelCol = Colonne labels (index)
+WidgetChartDataCol = Colonne données (index)
+WidgetChartAddColor = Ajouter une couleur
+
+ConfirmDeleteWidget = Êtes-vous sûr de vouloir supprimer ce widget ?
+WidgetCreated = Widget créé avec succès
+WidgetUpdated = Widget modifié avec succès
+WidgetDeleted = Widget supprimé
+WidgetCloned = Widget dupliqué avec succès
+
+CUSTOMWIDGET_MAX_ROWS = Nombre max de lignes par défaut
+CUSTOMWIDGET_CACHE_DEFAULT = Durée de cache par défaut (sec.)
+CUSTOMWIDGET_ALLOW_JOIN = Autoriser les JOIN dans les requêtes
+CUSTOMWIDGET_MAX_SLOTS = Nombre de slots box actifs (max 20)
+CUSTOMWIDGET_CHARTJS_CDN = URL CDN Chart.js (vide = copie locale)
+
+SQLWidget = Widget SQL
+SQLWidgetSlot = Slot widget SQL
+NoWidgetForThisSlot = Aucun widget configuré pour ce slot
+WidgetSQLExamples = Exemples de requêtes
+
+Back = Retour
+Save = Enregistrer
+Cancel = Annuler
+Edit = Modifier
+Delete = Supprimer
+Clone = Dupliquer
+Activate = Activer
+Deactivate = Désactiver
