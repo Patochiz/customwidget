@@ -57,18 +57,18 @@
 }
 
 /* ========================
-   Grille 2 colonnes (box dashboard)
+   Box dashboard pleine largeur
    ======================== */
-.customwidget-box-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+.box:has(.customwidget-fullwidth) {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
 }
 
-@media (max-width: 768px) {
-    .customwidget-box-wrapper {
-        grid-template-columns: 1fr;
-    }
+.customwidget-box-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 /* ========================
