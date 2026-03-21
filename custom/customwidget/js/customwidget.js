@@ -265,7 +265,13 @@ function cwRefreshWidget(widgetId) {
     fd.append('widget_id', widgetId);
     fd.append('token', typeof cw_token !== 'undefined' ? cw_token : '');
 
-    fetch(typeof cw_ajax_refresh_url !== 'undefined' ? cw_ajax_refresh_url : '', {
+    var refreshUrl = container.getAttribute('data-refresh-url');
+    if (!refreshUrl) {
+        if (btn) btn.classList.remove('cw-spinning');
+        return;
+    }
+
+    fetch(refreshUrl, {
         method: 'POST',
         body: fd
     })
