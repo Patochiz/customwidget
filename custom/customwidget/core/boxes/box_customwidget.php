@@ -71,6 +71,8 @@ class box_customwidget extends ModeleBoxes
             }
         }
 
+        $refresh_url = dol_buildpath('/customwidget/ajax/refresh.php', 1);
+
         $html = '';
         if ($need_chartjs) {
             global $conf;
@@ -80,15 +82,18 @@ class box_customwidget extends ModeleBoxes
             $html .= '<script src="'.htmlspecialchars($chartjs_url).'"></script>';
         }
 
+        $html .= '<div class="customwidget-box-wrapper customwidget-fullwidth">';
         foreach ($widgets as $widget) {
-            $html .= '<div class="customwidget-box-item" style="margin-bottom:15px;">';
+            $html .= '<div class="customwidget-box-item" data-widget-id="'.(int) $widget->id.'" data-refresh-url="'.htmlspecialchars($refresh_url).'" style="position:relative;">';
+            $html .= '<button type="button" class="cw-refresh-btn" onclick="cwRefreshWidget('.(int) $widget->id.')" title="'.$langs->trans('Refresh').'"><i class="fas fa-sync-alt"></i></button>';
             try {
-                $html .= CustomWidgetHelper::render($widget, $this->db, $langs);
+                $html .= CustomWidgetHelper::render($widget, $this->db, $langs, ($cachedelay > 0));
             } catch (Exception $e) {
                 $html .= '<div class="error">'.htmlspecialchars($e->getMessage()).'</div>';
             }
             $html .= '</div>';
         }
+        $html .= '</div>';
 
         $this->info_box_contents = array(
             array(
