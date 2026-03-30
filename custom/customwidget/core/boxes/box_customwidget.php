@@ -40,6 +40,8 @@ class box_customwidget extends ModeleBoxes
         // Format attendu : "cw_42"
         if (is_string($param) && preg_match('/^cw_(\d+)$/', $param, $m)) {
             $this->widget_id = (int) $m[1];
+            // boxcode unique dès le constructeur pour éviter la déduplication Dolibarr
+            $this->boxcode = 'customwidget_'.$this->widget_id;
         }
     }
 
