@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS llx_customwidget (
     -- Config commune
     display_zone    VARCHAR(20) DEFAULT 'box',
     position        INTEGER DEFAULT 0,
+    box_position    INTEGER DEFAULT NULL,
     active          TINYINT DEFAULT 1,
     cache_duration  INTEGER DEFAULT 300,
 

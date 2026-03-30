@@ -152,6 +152,12 @@ class modCustomWidget extends DolibarrModules
         $sql = array();
         $result = $this->_init($sql, $options);
 
+        // Migration : ajouter la colonne box_position si absente
+        $resql_check = $this->db->query("SELECT box_position FROM ".MAIN_DB_PREFIX."customwidget LIMIT 1");
+        if (!$resql_check) {
+            $this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."customwidget ADD COLUMN box_position INTEGER DEFAULT NULL");
+        }
+
         // Migration : supprimer l'ancienne box unique "conteneur"
         // (celle qui n'a pas de note au format 'cw_XX')
         $this->db->query(

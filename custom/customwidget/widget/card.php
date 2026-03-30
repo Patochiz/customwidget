@@ -49,6 +49,8 @@ if ($action === 'add' && $user->hasRight('customwidget', 'write')) {
     $object->sql_query = GETPOST('sql_query', 'nohtml');
     $object->display_zone = GETPOST('display_zone', 'alpha');
     $object->position = GETPOST('position', 'int');
+    $bp = GETPOST('box_position', 'alpha');
+    $object->box_position = ($bp !== '' && $bp !== '-1') ? (int) $bp : null;
     $object->active = GETPOST('active', 'int') ? 1 : 0;
     $object->cache_duration = GETPOST('cache_duration', 'int');
 
@@ -117,6 +119,8 @@ if ($action === 'update' && $user->hasRight('customwidget', 'write') && $id > 0)
     $object->sql_query = GETPOST('sql_query', 'nohtml');
     $object->display_zone = GETPOST('display_zone', 'alpha');
     $object->position = GETPOST('position', 'int');
+    $bp = GETPOST('box_position', 'alpha');
+    $object->box_position = ($bp !== '' && $bp !== '-1') ? (int) $bp : null;
     $object->active = GETPOST('active', 'int') ? 1 : 0;
     $object->cache_duration = GETPOST('cache_duration', 'int');
     $object->number_icon = GETPOST('number_icon', 'alpha');
@@ -236,6 +240,19 @@ if ($edit_mode) {
     print '</select>';
 } else {
     print htmlspecialchars($object->display_zone);
+}
+print '</td></tr>';
+
+// Position dashboard (visible uniquement si display_zone = 'box')
+print '<tr id="cw_box_position_row"'.($object->display_zone !== 'box' ? ' style="display:none;"' : '').'>';
+print '<td>'.$langs->trans('WidgetBoxPosition').'</td><td>';
+if ($edit_mode) {
+    print '<select name="box_position" class="flat">';
+    print '<option value="-1"'.($object->box_position === null ? ' selected' : '').'>'.$langs->trans('WidgetBoxPositionStandard').'</option>';
+    print '<option value="0"'.(($object->box_position !== null && (int) $object->box_position === 0) ? ' selected' : '').'>'.$langs->trans('WidgetBoxPositionFullWidth').'</option>';
+    print '</select>';
+} else {
+    print ($object->box_position !== null && (int) $object->box_position === 0) ? $langs->trans('WidgetBoxPositionFullWidth') : $langs->trans('WidgetBoxPositionStandard');
 }
 print '</td></tr>';
 

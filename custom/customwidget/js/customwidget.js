@@ -143,6 +143,12 @@ function cwUpdateSections() {
                 zoneSelect.value = 'box';
             }
         }
+
+        // Masquer le sélecteur box_position si zone != 'box'
+        var bpRow = document.getElementById('cw_box_position_row');
+        if (bpRow) {
+            bpRow.style.display = (zoneSelect.value === 'box') ? '' : 'none';
+        }
     }
 }
 

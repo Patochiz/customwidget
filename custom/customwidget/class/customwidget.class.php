@@ -38,6 +38,7 @@ class CustomWidget extends CommonObject
         'chart_data_col'  => array('type' => 'integer', 'label' => 'ChartDataCol', 'enabled' => 1, 'position' => 74, 'notnull' => 0, 'visible' => 0, 'default' => 1),
         'display_zone'    => array('type' => 'varchar(20)', 'label' => 'DisplayZone', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => 1, 'default' => 'box'),
         'position'        => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'position' => 90, 'notnull' => 0, 'visible' => 1, 'default' => 0),
+        'box_position'    => array('type' => 'integer', 'label' => 'BoxPosition', 'enabled' => 1, 'position' => 95, 'notnull' => 0, 'visible' => 1, 'default' => null),
         'active'          => array('type' => 'integer', 'label' => 'Active', 'enabled' => 1, 'position' => 100, 'notnull' => 1, 'visible' => 1, 'default' => 1),
         'cache_duration'  => array('type' => 'integer', 'label' => 'CacheDuration', 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => 0, 'default' => 300),
         'entity'          => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'position' => 190, 'notnull' => 1, 'visible' => 0, 'default' => 1),
@@ -71,6 +72,7 @@ class CustomWidget extends CommonObject
     public $chart_data_col = 1;
     public $display_zone = 'box';
     public $position = 0;
+    public $box_position;
     public $active = 1;
     public $cache_duration = 300;
     public $entity;
@@ -107,7 +109,7 @@ class CustomWidget extends CommonObject
         $sql .= "number_sub2_sql, number_sub2_label, number_url,";
         $sql .= "table_columns, table_maxrows,";
         $sql .= "chart_type, chart_colors, chart_height, chart_label_col, chart_data_col,";
-        $sql .= "display_zone, position, active, cache_duration,";
+        $sql .= "display_zone, position, box_position, active, cache_duration,";
         $sql .= "entity, fk_user_creat, date_creation";
         $sql .= ") VALUES (";
         $sql .= "'".$this->db->escape($this->ref)."',";
@@ -132,6 +134,7 @@ class CustomWidget extends CommonObject
         $sql .= (int) $this->chart_data_col.",";
         $sql .= "'".$this->db->escape($this->display_zone)."',";
         $sql .= (int) $this->position.",";
+        $sql .= ($this->box_position !== null && $this->box_position !== '' ? (int) $this->box_position : "NULL").",";
         $sql .= (int) $this->active.",";
         $sql .= (int) $this->cache_duration.",";
         $sql .= (int) $this->entity.",";
@@ -197,6 +200,7 @@ class CustomWidget extends CommonObject
                 $this->chart_data_col = $obj->chart_data_col;
                 $this->display_zone = $obj->display_zone;
                 $this->position = $obj->position;
+                $this->box_position = ($obj->box_position !== null ? (int) $obj->box_position : null);
                 $this->active = $obj->active;
                 $this->cache_duration = $obj->cache_duration;
                 $this->entity = $obj->entity;
@@ -236,7 +240,12 @@ class CustomWidget extends CommonObject
             ." AND entity = ".(int) $conf->entity;
         $resql = $this->db->query($sql);
         if ($resql && $this->db->num_rows($resql) > 0) {
-            return 1; // déjà enregistré
+            // Déjà enregistré — auto-activer si box_position est défini
+            $existing = $this->db->fetch_object($resql);
+            if ($this->box_position !== null && $this->box_position !== '') {
+                $this->activateBoxForAllUsers((int) $existing->rowid, (int) $this->box_position);
+            }
+            return 1;
         }
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note) VALUES ("
@@ -249,6 +258,13 @@ class CustomWidget extends CommonObject
             $this->error = $this->db->lasterror();
             return -1;
         }
+
+        // Auto-activer si box_position est défini
+        if ($this->box_position !== null && $this->box_position !== '') {
+            $box_def_id = $this->db->last_insert_id(MAIN_DB_PREFIX.'boxes_def');
+            $this->activateBoxForAllUsers((int) $box_def_id, (int) $this->box_position);
+        }
+
         return 1;
     }
 
@@ -281,6 +297,72 @@ class CustomWidget extends CommonObject
         );
 
         return 1;
+    }
+
+    /**
+     * Auto-active la box pour tous les utilisateurs à une position donnée.
+     *
+     * @param int $box_def_id  rowid dans llx_boxes_def
+     * @param int $position    0=pleine largeur, 1=gauche, 2=droite
+     * @return int  1 si OK, -1 si erreur
+     */
+    private function activateBoxForAllUsers($box_def_id, $position)
+    {
+        // Vérifier si déjà activé pour tous les utilisateurs à cette position
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes"
+            ." WHERE box_id = ".(int) $box_def_id
+            ." AND fk_user = 0"
+            ." AND position = ".(int) $position;
+        $resql = $this->db->query($sql);
+        if ($resql && $this->db->num_rows($resql) > 0) {
+            return 1;
+        }
+
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user, fk_position)"
+            ." VALUES (".(int) $box_def_id.", ".(int) $position.", '0', 0, 0)";
+        $resql = $this->db->query($sql);
+        return $resql ? 1 : -1;
+    }
+
+    /**
+     * Synchronise les entrées llx_boxes quand box_position change.
+     * Si box_position est défini : assure l'auto-activation à la bonne position.
+     * Si box_position est NULL : supprime les auto-activations (fk_user=0 uniquement).
+     */
+    private function syncBoxActivation()
+    {
+        global $conf;
+
+        $note = 'cw_'.$this->id;
+
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE file = 'box_customwidget.php@customwidget'"
+            ." AND note = '".$this->db->escape($note)."'"
+            ." AND entity = ".(int) $conf->entity;
+        $resql = $this->db->query($sql);
+        if (!$resql || $this->db->num_rows($resql) == 0) {
+            return;
+        }
+        $obj = $this->db->fetch_object($resql);
+        $box_def_id = (int) $obj->rowid;
+
+        if ($this->box_position !== null && $this->box_position !== '') {
+            // Supprimer les auto-activations avec mauvaise position
+            $this->db->query(
+                "DELETE FROM ".MAIN_DB_PREFIX."boxes"
+                ." WHERE box_id = ".(int) $box_def_id
+                ." AND fk_user = 0"
+                ." AND position != ".(int) $this->box_position
+            );
+            $this->activateBoxForAllUsers($box_def_id, (int) $this->box_position);
+        } else {
+            // Supprimer les auto-activations (préserve les activations per-user)
+            $this->db->query(
+                "DELETE FROM ".MAIN_DB_PREFIX."boxes"
+                ." WHERE box_id = ".(int) $box_def_id
+                ." AND fk_user = 0"
+            );
+        }
     }
 
     /**
@@ -362,6 +444,7 @@ class CustomWidget extends CommonObject
         $sql .= " chart_data_col = ".(int) $this->chart_data_col.",";
         $sql .= " display_zone = '".$this->db->escape($this->display_zone)."',";
         $sql .= " position = ".(int) $this->position.",";
+        $sql .= " box_position = ".($this->box_position !== null && $this->box_position !== '' ? (int) $this->box_position : "NULL").",";
         $sql .= " active = ".(int) $this->active.",";
         $sql .= " cache_duration = ".(int) $this->cache_duration.",";
         $sql .= " fk_user_modif = ".(int) $user->id;
@@ -374,6 +457,10 @@ class CustomWidget extends CommonObject
             require_once __DIR__.'/customwidget.helper.class.php';
             CustomWidgetHelper::purgeCache($this->id);
             $this->db->commit();
+
+            // Synchroniser l'activation box selon box_position
+            $this->syncBoxActivation();
+
             return 1;
         } else {
             $this->error = $this->db->lasterror();
@@ -521,6 +608,7 @@ class CustomWidget extends CommonObject
         $this->chart_data_col = $orig->chart_data_col;
         $this->display_zone = $orig->display_zone;
         $this->position = $orig->position + 1;
+        $this->box_position = $orig->box_position;
         $this->active = 0;
         $this->cache_duration = $orig->cache_duration;
 
