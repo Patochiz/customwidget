@@ -308,18 +308,23 @@ class CustomWidget extends CommonObject
      */
     private function activateBoxForAllUsers($box_def_id, $position)
     {
-        // Vérifier si déjà activé pour tous les utilisateurs à cette position
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes"
+        // Forcer la position sur toutes les activations existantes
+        $this->db->query(
+            "UPDATE ".MAIN_DB_PREFIX."boxes SET position = ".(int) $position
             ." WHERE box_id = ".(int) $box_def_id
-            ." AND fk_user = 0"
-            ." AND position = ".(int) $position;
+        );
+
+        // S'assurer qu'au moins une activation existe
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes"
+            ." WHERE box_id = ".(int) $box_def_id;
         $resql = $this->db->query($sql);
         if ($resql && $this->db->num_rows($resql) > 0) {
             return 1;
         }
 
+        // Aucune activation → en créer une globale
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user, fk_position)"
-            ." VALUES (".(int) $box_def_id.", ".(int) $position.", '0', 0, 0)";
+            ." VALUES (".(int) $box_def_id.", ".(int) $position.", 'A01', 0, 0)";
         $resql = $this->db->query($sql);
         return $resql ? 1 : -1;
     }
@@ -347,21 +352,7 @@ class CustomWidget extends CommonObject
         $box_def_id = (int) $obj->rowid;
 
         if ($this->box_position !== null && $this->box_position !== '') {
-            // Supprimer les auto-activations avec mauvaise position
-            $this->db->query(
-                "DELETE FROM ".MAIN_DB_PREFIX."boxes"
-                ." WHERE box_id = ".(int) $box_def_id
-                ." AND fk_user = 0"
-                ." AND position != ".(int) $this->box_position
-            );
             $this->activateBoxForAllUsers($box_def_id, (int) $this->box_position);
-        } else {
-            // Supprimer les auto-activations (préserve les activations per-user)
-            $this->db->query(
-                "DELETE FROM ".MAIN_DB_PREFIX."boxes"
-                ." WHERE box_id = ".(int) $box_def_id
-                ." AND fk_user = 0"
-            );
         }
     }
 
