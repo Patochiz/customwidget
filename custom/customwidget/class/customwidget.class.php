@@ -144,6 +144,10 @@ class CustomWidget extends CommonObject
         if ($resql) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'customwidget');
             $this->db->commit();
+
+            // Enregistrer comme box Dolibarr indépendante
+            $this->registerBoxDef();
+
             return $this->id;
         } else {
             $this->error = $this->db->lasterror();
@@ -207,6 +211,76 @@ class CustomWidget extends CommonObject
             $this->error = $this->db->lasterror();
             return -1;
         }
+    }
+
+    /**
+     * Enregistre ce widget comme une box Dolibarr dans llx_boxes_def.
+     * Appelé par create() et par modCustomWidget::init() (migration).
+     *
+     * @return int  1 si OK ou déjà existant, -1 si erreur
+     */
+    public function registerBoxDef()
+    {
+        global $conf;
+
+        if (empty($this->id)) {
+            return -1;
+        }
+
+        $note = 'cw_'.$this->id;
+
+        // Vérifier si déjà enregistré
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE file = 'box_customwidget.php@customwidget'"
+            ." AND note = '".$this->db->escape($note)."'"
+            ." AND entity = ".(int) $conf->entity;
+        $resql = $this->db->query($sql);
+        if ($resql && $this->db->num_rows($resql) > 0) {
+            return 1; // déjà enregistré
+        }
+
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note) VALUES ("
+            ."'box_customwidget.php@customwidget'"
+            .", ".(int) $conf->entity
+            .", '".$this->db->escape($note)."'"
+            .")";
+        $resql = $this->db->query($sql);
+        if (!$resql) {
+            $this->error = $this->db->lasterror();
+            return -1;
+        }
+        return 1;
+    }
+
+    /**
+     * Supprime l'entrée llx_boxes_def et les activations llx_boxes associées.
+     * Appelé par delete().
+     *
+     * @return int  1 si OK, -1 si erreur
+     */
+    public function unregisterBoxDef()
+    {
+        if (empty($this->id)) {
+            return -1;
+        }
+
+        $note = 'cw_'.$this->id;
+
+        // Supprimer les activations utilisateur (llx_boxes)
+        $this->db->query(
+            "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE box_id IN ("
+            ."SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE note = '".$this->db->escape($note)."'"
+            .")"
+        );
+
+        // Supprimer la définition (llx_boxes_def)
+        $this->db->query(
+            "DELETE FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE note = '".$this->db->escape($note)."'"
+        );
+
+        return 1;
     }
 
     /**
@@ -313,6 +387,9 @@ class CustomWidget extends CommonObject
      */
     public function delete($user, $notrigger = 0)
     {
+        // Supprimer la box Dolibarr associée (llx_boxes_def + llx_boxes)
+        $this->unregisterBoxDef();
+
         $this->db->begin();
 
         // Supprimer les liaisons groupes

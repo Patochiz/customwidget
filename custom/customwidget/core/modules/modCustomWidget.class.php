@@ -83,14 +83,9 @@ class modCustomWidget extends DolibarrModules
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'delete';
 
-        // Boxes - une seule box qui affiche tous les widgets actifs
-        $this->boxes = array(
-            0 => array(
-                'file'              => 'box_customwidget.php@customwidget',
-                'note'              => 'Widgets SQL personnalisés (tous les widgets actifs)',
-                'enabledbydefaulton' => 'Home',
-            ),
-        );
+        // Pas de box statique. Chaque widget a sa propre entrée llx_boxes_def
+        // créée dynamiquement par CustomWidget::create() / registerBoxDef()
+        $this->boxes = array();
 
         // Menus
         $this->menu = array();
@@ -151,17 +146,40 @@ class modCustomWidget extends DolibarrModules
      */
     public function init($options = '')
     {
-        // _load_tables peut retourner -1 si les tables/index existent déjà
-        // On l'appelle sans bloquer pour ne pas empêcher l'enregistrement des boxes
+        global $conf;
+
         $this->_load_tables('/customwidget/sql/');
         $sql = array();
         $result = $this->_init($sql, $options);
 
-        // Forcer la box en position 0 (pleine largeur) sur le dashboard
+        // Migration : supprimer l'ancienne box unique "conteneur"
+        // (celle qui n'a pas de note au format 'cw_XX')
         $this->db->query(
-            "UPDATE ".MAIN_DB_PREFIX."boxes SET position = 0, fk_position = 0"
-            ." WHERE box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = 'box_customwidget.php@customwidget')"
+            "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE box_id IN ("
+            ."SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE file = 'box_customwidget.php@customwidget'"
+            ." AND (note IS NULL OR note NOT LIKE 'cw\\_%')"
+            .")"
         );
+        $this->db->query(
+            "DELETE FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE file = 'box_customwidget.php@customwidget'"
+            ." AND (note IS NULL OR note NOT LIKE 'cw\\_%')"
+        );
+
+        // Enregistrer chaque widget actif existant dans llx_boxes_def
+        $resql = $this->db->query(
+            "SELECT rowid FROM ".MAIN_DB_PREFIX."customwidget"
+            ." WHERE entity = ".(int) $conf->entity." AND active = 1"
+        );
+        if ($resql) {
+            require_once dol_buildpath('/customwidget/class/customwidget.class.php', 0);
+            while ($obj = $this->db->fetch_object($resql)) {
+                $w = new CustomWidget($this->db);
+                $w->fetch($obj->rowid);
+                $w->registerBoxDef();
+            }
+        }
 
         return $result;
     }
@@ -171,6 +189,19 @@ class modCustomWidget extends DolibarrModules
      */
     public function remove($options = '')
     {
+        // Supprimer toutes les activations utilisateur
+        $this->db->query(
+            "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE box_id IN ("
+            ."SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE file = 'box_customwidget.php@customwidget'"
+            .")"
+        );
+        // Supprimer toutes les définitions de boxes
+        $this->db->query(
+            "DELETE FROM ".MAIN_DB_PREFIX."boxes_def"
+            ." WHERE file = 'box_customwidget.php@customwidget'"
+        );
+
         $sql = array();
         return $this->_remove($sql, $options);
     }
