@@ -125,7 +125,16 @@ function cwPreview() {
    Sections dynamiques (card)
    ======================== */
 function cwUpdateSections() {
-    var type = document.getElementById('cw_widget_type') ? document.getElementById('cw_widget_type').value : 'number';
+    var selectEl = document.getElementById('cw_widget_type');
+    var hiddenEl = document.getElementById('cw_widget_type_value');
+    var type = '';
+    if (selectEl) {
+        type = selectEl.value;
+    } else if (hiddenEl) {
+        type = hiddenEl.value;
+    }
+    if (!type) type = 'number';
+
     var sections = document.querySelectorAll('.cw-type-section');
     for (var i = 0; i < sections.length; i++) {
         sections[i].style.display = 'none';
@@ -146,8 +155,8 @@ function cwUpdateSections() {
     }
 }
 
-// Appel initial
-if (document.getElementById('cw_widget_type')) {
+// Appel initial (mode édition via select OU mode vue via hidden input)
+if (document.getElementById('cw_widget_type') || document.getElementById('cw_widget_type_value')) {
     cwUpdateSections();
 }
 

@@ -188,7 +188,7 @@ if ($object->chart_colors) {
 
 if ($id > 0) {
     $head = customwidget_prepare_head($object);
-    print dol_get_fiche_head($head, 'card', $langs->trans('Module500200Name'), -1, 'customwidget@customwidget');
+    print dol_get_fiche_head($head, 'card', $langs->trans('Module680200Name'), -1, 'customwidget@customwidget');
     print dol_banner_tab($object, 'id', null, 1, 'rowid', 'ref');
 } else {
     print load_fiche_titre($langs->trans('CustomWidgetNew'), '', 'customwidget@customwidget');
@@ -224,6 +224,7 @@ if ($edit_mode) {
     print '</select>';
 } else {
     print htmlspecialchars($object->widget_type);
+    print '<input type="hidden" id="cw_widget_type_value" value="'.htmlspecialchars($object->widget_type).'">';
 }
 print '</td></tr>';
 
@@ -302,6 +303,11 @@ if ($edit_mode) {
     print '<div id="cw-query-result" class="customwidget-query-result" style="display:none;margin-top:10px;"></div>';
 }
 print '</div>';
+
+// Fallback : s'assurer que widget_type a une valeur valide pour la visibilité des sections
+if (empty($object->widget_type) || !in_array($object->widget_type, array('number', 'table', 'chart'))) {
+    $object->widget_type = 'number';
+}
 
 // === Section Number ===
 $num_style = ($object->widget_type !== 'number') ? 'display:none;' : '';

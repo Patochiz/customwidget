@@ -52,7 +52,7 @@ class CustomWidget extends CommonObject
     public $ref;
     public $label;
     public $description;
-    public $widget_type;
+    public $widget_type = 'number';
     public $sql_query;
     public $number_icon;
     public $number_color = '#0077b6';
@@ -84,6 +84,35 @@ class CustomWidget extends CommonObject
         global $conf;
         $this->db = $db;
         $this->entity = isset($conf->entity) ? $conf->entity : 1;
+    }
+
+    /**
+     * Retourne un lien cliquable vers la fiche du widget
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+        $label = dol_escape_htmltag($this->ref);
+        if (!empty($this->label)) {
+            $label .= ' - '.dol_escape_htmltag($this->label);
+        }
+
+        $url = dol_buildpath('/customwidget/widget/card.php', 1).'?id='.(int) $this->id;
+
+        $linkstart = '<a href="'.$url.'"';
+        if (empty($notooltip)) {
+            $linkstart .= ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+        }
+        $linkstart .= '>';
+        $linkend = '</a>';
+
+        $result = $linkstart;
+        if ($withpicto) {
+            $result .= img_object($label, $this->picto, 'class="pictofixedwidth"').' ';
+        }
+        $result .= dol_escape_htmltag($this->ref);
+        $result .= $linkend;
+
+        return $result;
     }
 
     /**
